@@ -1,0 +1,16 @@
+@startuml archimate
+
+rectangle ACE_Acceptor
+rectangle ACE_Reactor
+rectangle ACE_Svc_handler
+rectangle Server_PI
+rectangle Server_DTP
+
+!include <archimate/Archimate>
+
+Server_PI .up.|> ACE_Svc_handler
+Server_PI -> Server_DTP
+Rel_Assignment(ACE_Acceptor, ACE_Reactor, register)
+Rel_Assignment(ACE_Reactor, Server_PI, Dispatch)
+
+@enduml

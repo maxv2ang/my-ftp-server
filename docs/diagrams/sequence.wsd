@@ -1,0 +1,52 @@
+@startuml sequence
+actor ftp_client
+participant ACE_Acceptor
+participant ACE_Reactor
+participant Server_PI
+participant Server_DTP
+
+ACE_Acceptor -> ACE_Acceptor : open()
+activate ACE_Acceptor
+ACE_Acceptor -> ACE_Reactor : register_handler(ACCEPT_MASK)
+deactivate ACE_Acceptor
+
+ftp_client -> ACE_Reactor : connect
+ACE_Reactor -> ACE_Acceptor : accept
+ACE_Acceptor -> Server_PI : handle_input & make_svc_handler()
+Server_PI -> ACE_Reactor : register_handler(WRITE/READ_MASK)
+
+loop receive command
+    alt not need data connection
+        ftp_client -> ACE_Reactor : send command & args
+        ACE_Reactor -> Server_PI : handle_input()
+        Server_PI -> Server_PI : solve_command(USER/PASS/SIZE/PWD/CWD/MKD/RMD/DELE)
+        Server_PI --> ftp_client : send response
+    else need data connection
+        ftp_client -> ACE_Reactor : send command & args
+        ACE_Reactor -> Server_PI : handle_input()
+        Server_PI -> Server_DTP : solve_command(EPSV/PASV)
+        Server_DTP -> Server_DTP : open()
+        Server_DTP --> ftp_client : send response
+        Server_PI -> Server_PI : solve_command(LIST/RETR/STOR)
+        Server_PI --> ftp_client :send response : start sending data
+        ftp_client -> Server_DTP : connect()
+        activate Server_DTP
+        Server_DTP -> ftp_client : accept()
+        deactivate Server_DTP
+        alt server to client
+            loop LIST/RETR
+                Server_DTP -> ftp_client : send data
+            end
+        else client to server
+            loop STOR
+                ftp_client -> Server_DTP : send data
+            end
+        end
+        Server_DTP -> ftp_client : close()
+        Server_PI --> ftp_client : send response : transfer complete
+    end
+end
+
+Server_PI -> ftp_client : close()
+
+@enduml

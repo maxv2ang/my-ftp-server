@@ -1,0 +1,58 @@
+@startuml ftpd_state
+
+start
+
+:Acceptor open;
+:Reactor run event loop;
+:Client connected;
+
+while (Is loged in ?) is (false)
+  :Notify user to login;
+  :Check username and password;
+endwhile (true)
+:Resive command form client;
+
+repeat
+switch (Parse command?)
+case ( LIST/STORE/RETR )
+if (Is in passive mod?) then (yes)
+  :Data transfer;
+  :Send response message;
+else (no)
+  :Notify user to use EPSV/PASV first;
+endif
+case ( EPSV/PASV )
+:Data connection establishment;
+:Send response message;
+case ( CWD/RMD )
+if (Is dirctory exist?) then (yes)
+  :Change or remove directory;
+  :Send response message;
+else (no)
+  :Send errno to client;
+endif
+case ( PWD )
+:Send current directory;
+case ( MKD )
+if (Is dirctory exist?) then (no)
+  :New a directory;
+  :Send response message;
+else (yes)
+  :Send errno to client;
+endif
+case ( SIZE/DELE )
+if (Is file exist?) then (yes)
+  :Get size or delete file;
+  :Send response message;
+else (no)
+  :Send errno to client;
+endif
+case ( Invaild command )
+:Send errno to client;
+endswitch
+repeat while (More command?)
+
+
+stop
+
+@enduml

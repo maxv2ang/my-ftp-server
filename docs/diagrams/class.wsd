@@ -1,0 +1,76 @@
+@startuml ftpd_class
+
+class ACE_Acceptor<Server_PI, ACE_SOCK_ACCEPTOR>
+
+class ACE_Reactor
+
+class ACE_Svc_Handler<ACE_SOCK_STREAM, ACE_NULL_SYNCH>
+
+struct Command
+{
+    + std::string command
+    + std::string param
+}
+
+class Server_PI
+{
+    - {static} std::unordered_map<std::string, void (Server_PI::*)(const Command&)> handlers_
+    - Server_DTP server_dtp_
+    - bool is_loged_in_
+    - bool is_passive_mod_
+    - std::string username_
+    - std::string password_
+    - std::string current_dir_
+    - {static} std::string root_dir_
+    --
+    + Server_PI()
+    + int open(void* = 0)
+    + virtual int handle_input(ACE_HANDLE fd = ACE_INVALID_HANDLE)
+    + virtual int handle_close(ACE_HANDLE handle, ACE_Reactor_Mask close_mask)
+    + void solve_command(const char* buf)
+    + void solve_user(const Command& command)
+    + void solve_pass(const Command& command)
+    + void solve_syst(const Command& command)
+    + void solve_feat(const Command& command)
+    + void solve_type(const Command& command)
+    + void solve_size(const Command& command)
+    + void solve_pwd(const Command& command)
+    + void solve_cwd(const Command& command)
+    + void solve_mkd(const Command& command)
+    + void solve_rmd(const Command& command)
+    + void solve_dele(const Command& command)
+    + void solve_pasv(const Command& command)
+    + void solve_epsv(const Command& command)
+    + void solve_list(const Command& command)
+    + void solve_retr(const Command& command)
+    + void solve_stor(const Command& command)
+    + void solve_quit(const Command& command)
+}
+
+class Server_DTP
+{
+    - ACE_SOCK_Acceptor acceptor_
+    - ACE_INET_Addr port_to_listen_
+    - ACE_SOCK_Stream peer_
+    - ACE_INET_Addr peer_addr_
+    - ACE_FILE_IO file_
+    - char buf_[MAX_BUFFER_SIZE]
+    --
+    + ~Server_DTP()
+    + int open()
+    + int accept()
+    + void close()
+    + int solve_list_data(std::string path)
+    + int send_file(std::string path)
+    + int resv_file(std::string path)
+}
+
+
+ACE_Svc_Handler <|-- Server_PI
+Server_DTP *-- Server_PI
+ACE_Acceptor ..> ACE_Reactor
+ACE_Reactor ..> Server_PI
+Server_PI ..> Command
+
+
+@enduml

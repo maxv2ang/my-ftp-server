@@ -1,0 +1,32 @@
+#ifndef MESSAGE_H
+#define MESSAGE_H
+
+#define MSG_TIME_OUT "421 Timeout.\r\n"
+#define MSG_USER_SUCCESS "331 Please specify the password.\r\n"
+#define MSG_USER_FAILED "530 Permission denied.\r\n"
+#define MSG_PASS_SUCCESS "230 Login successful.\r\n"
+#define MSG_PASS_FAILED "530 Login incorrect.\r\n"
+#define MSG_CWD_SUCCESS "250 Directory successfully changed.\r\n"
+#define MSG_CWD_FAILED "550 Failed to change directory.\r\n"
+#define MSG_RETR_FAILED "550 Failed to open file.\r\n"
+#define MSG_STOR_START "150 Ok to send data.\r\n"
+#define MSG_TRANSFER_COMPLETE "226 Transfer complete.\r\n"
+#define MSG_GOODBYE "221 Goodbye.\r\n"
+// #define STATUS_MKD_SUCCESS "257 \"%S\" created\r\n"
+#define MSG_MKD_SUCCESS "257 Directory created\r\n"
+#define MSG_MKD_FAILED "550 Create directory operation failed.\r\n"
+#define MSG_RMD_SUCCESS "250 Remove directory operation successful.\r\n"
+#define MSG_RMD_FAILED "550 Remove directory operation failed.\r\n"
+#define MSG_DELE_SUCCESS "250 Delete operation successful.\r\n"
+#define MSG_DELE_FAILED "550 Delete operation failed.\r\n"
+#define MSG_LIST_START "150 Here comes the directory listing.\r\n"
+#define MSG_LIST_FINISHED "226 Directory send OK.\r\n"
+#define MSG_INVALID_COMMAND "500 ?Invalid command.\r\n"
+#define MSG_NOT_LOGED_IN "530 Please login with USER and PASS.\r\n"
+#define MSG_NOT_IN_PASSIVE "425 Use PORT or PASV first.\r\n"
+#define MSG_SIZE_FAILED "550 Could not get file size.\r\n"
+#define MSG_SYST_RESPONSE "215 UNIX Type: L8\r\n"
+#define MSG_FEAT_RESPONSE "211-Features:\r\n PASV\r\n211 End\r\n"
+#define MSG_TYPE_RESPONSE "200 Switching to Binary mode.\r\n"
+
+#endif // MESSAGE_H
